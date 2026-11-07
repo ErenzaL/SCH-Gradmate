@@ -44,7 +44,9 @@ st.markdown("""
 <style>
 :root { --sch-blue:#0878C9; --sch-ink:#182433; --sch-muted:#64748b; --sch-line:#e6ebf0; }
 .stApp { background: #f5f7fa; color:var(--sch-ink); }
-[data-testid="stMainBlockContainer"] { max-width: 760px; padding-top: 1.1rem; padding-bottom: 5.5rem; }
+[data-testid="stHeader"] { background:#f5f7fa; }
+footer { visibility:hidden; }
+[data-testid="stMainBlockContainer"] { max-width: 760px; padding-top: 4.75rem; padding-bottom: 5.5rem; }
 .sch-header { background:#fff; border:1px solid var(--sch-line); border-radius:18px; padding:16px 20px; margin-bottom:20px; box-shadow:0 3px 14px rgba(18,39,62,.04); }
 .sch-title { font-size:1.25rem; line-height:1.35; font-weight:750; color:#142333; margin:0; }
 .sch-subtitle { font-size:.88rem; color:var(--sch-muted); margin-top:3px; }
@@ -68,7 +70,7 @@ div.stButton > button:hover { border-color:var(--sch-blue); color:var(--sch-blue
 [data-testid="stForm"] { border:1px solid var(--sch-line); background:#fff; border-radius:16px; padding:16px; }
 .stCaption { color:var(--sch-muted); }
 @media (max-width:640px) {
- [data-testid="stMainBlockContainer"] { padding: .7rem .75rem 5.25rem; }
+ [data-testid="stMainBlockContainer"] { padding: 4.5rem .75rem 5.25rem; }
  .sch-header { padding:13px 15px; border-radius:15px; }
  .sch-welcome { padding:18px; border-radius:16px; }
  .sch-title { font-size:1.12rem; }
@@ -282,29 +284,31 @@ def answer_question(question: str) -> str | dict:
 
 
 # 첫 방문에만 간결한 인사와 빠른 시작 버튼을 보여줍니다.
+welcome_slot = st.empty()
 if not st.session_state.messages and st.session_state.active_tool is None:
-    st.markdown(f'<div class="sch-welcome"><p>{WELCOME}</p></div>', unsafe_allow_html=True)
-    suggestion_cols = st.columns(3)
-    for col, label in zip(suggestion_cols, SUGGESTIONS):
-        if col.button(label, key=f"suggestion_{label}", width="stretch"):
-            if label == "졸업요건 질문하기":
-                st.session_state.pending_prompt = "졸업요건을 알려주세요."
-                add_message("user", "졸업요건 질문하기")
-            elif label == "수강과목 분석하기":
-                st.session_state.active_tool = "course"
-                add_message("user", "수강과목 분석하기")
-                add_message("assistant", "수강과목 파일을 올리면 이수 학점과 학번별 기준을 비교해 드릴게요.")
-            else:
-                st.session_state.active_tool = "activity"
-                add_message("user", "비교과 활동 체크하기")
-                add_message("assistant", "완료한 비교과 활동을 선택해 주세요. 입력하신 내용으로 예상 점수를 확인해 드릴게요.")
-            st.rerun()
-    st.caption("자주 묻는 질문")
-    for row in (QUESTION_CHIPS[:3], QUESTION_CHIPS[3:]):
-        for col, text in zip(st.columns(3), row):
-            if col.button(text, key=f"chip_{text}", width="stretch"):
-                st.session_state.pending_prompt = text
+    with welcome_slot.container():
+        st.markdown(f'<div class="sch-welcome"><p>{WELCOME}</p></div>', unsafe_allow_html=True)
+        suggestion_cols = st.columns(3)
+        for col, label in zip(suggestion_cols, SUGGESTIONS):
+            if col.button(label, key=f"suggestion_{label}", width="stretch"):
+                if label == "졸업요건 질문하기":
+                    st.session_state.pending_prompt = "졸업요건을 알려주세요."
+                    add_message("user", "졸업요건 질문하기")
+                elif label == "수강과목 분석하기":
+                    st.session_state.active_tool = "course"
+                    add_message("user", "수강과목 분석하기")
+                    add_message("assistant", "수강과목 파일을 올리면 이수 학점과 학번별 기준을 비교해 드릴게요.")
+                else:
+                    st.session_state.active_tool = "activity"
+                    add_message("user", "비교과 활동 체크하기")
+                    add_message("assistant", "완료한 비교과 활동을 선택해 주세요. 입력하신 내용으로 예상 점수를 확인해 드릴게요.")
                 st.rerun()
+        st.caption("자주 묻는 질문")
+        for row in (QUESTION_CHIPS[:3], QUESTION_CHIPS[3:]):
+            for col, text in zip(st.columns(3), row):
+                if col.button(text, key=f"chip_{text}", width="stretch"):
+                    st.session_state.pending_prompt = text
+                    st.rerun()
 
 # 이전 대화 기록
 for message in st.session_state.messages:
@@ -444,6 +448,7 @@ if st.session_state.pending_prompt:
     prompt = st.session_state.pending_prompt
     st.session_state.pending_prompt = None
 if prompt:
+    welcome_slot.empty()
     add_message("user", prompt)
     with st.chat_message("user", avatar="😊"):
         st.markdown(prompt)

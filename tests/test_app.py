@@ -87,3 +87,11 @@ def test_activity_tool_requires_year_and_uses_verified_rule(app):
     next(b for b in app.button if b.label == "비교과 활동 체크하기").click().run()
     assert not app.exception
     assert any("학번" in str(i.value) for i in app.info)
+
+
+def test_clicking_a_suggested_question_answers_without_errors(app):
+    chip = next(b for b in app.button if b.label == "졸업에 봉사활동이 필요한가요?")
+    chip.click().run()
+    assert not app.exception
+    assert last_assistant(app)["mode"] in ("extractive", "rule", "insufficient")
+    assert app.session_state.messages[0]["content"] == "졸업에 봉사활동이 필요한가요?"
