@@ -88,3 +88,11 @@ def test_legacy_entry_points_still_work_and_include_citations():
     assert "130학점" in text and "출처:" in text and "쪽" in text
     text, hits, _ = rag.retrieval_answer("봉사학습을 어떻게 신청하나요?", 2024)
     assert "출처:" in text and hits
+
+
+def test_excerpts_hide_pdf_bullet_glyphs_and_list_markers():
+    r = respond("외국인 유학생도 봉사학습을 이수해야 하나요?", 2024, use_llm=False)
+    for c in r["citations"]:
+        assert "þ" not in c["snippet"]
+        assert not any(line.lstrip().startswith(("- ", "• ")) for line in c["snippet"].splitlines())
+    assert "þ" not in r["text"]
