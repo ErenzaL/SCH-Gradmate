@@ -1,0 +1,8 @@
+﻿expected_behavior,n,passed,pass_rate,soft_pass_rate,fact_recall,citation_hit,citation_precision,median_latency_ms
+answer,40,32,0.8,0.8,0.833,0.975,0.846,1.31
+answer_with_caveat,6,6,1.0,1.0,1.0,1.0,1.0,0.115
+answer_with_conflict,2,2,1.0,1.0,1.0,1.0,1.0,0.09
+calculate,1,1,1.0,1.0,1.0,1.0,0.5,0.24
+clarify_year,3,3,1.0,1.0,,,,0.09
+insufficient,7,5,0.714,1.0,0.0,,,3.43
+no_year_mixing,1,1,1.0,1.0,,1.0,1.0,0.15

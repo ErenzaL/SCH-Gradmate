@@ -1,0 +1,83 @@
+{
+  "2024": {
+    "source": "2024학번 졸업요건.jpeg",
+    "page": 1,
+    "verified": true,
+    "total_credits": 130,
+    "general_education": {
+      "common": 12,
+      "required_area": 9,
+      "elective": 11,
+      "total": 32
+    },
+    "major": {
+      "basic": 28,
+      "required": 0,
+      "elective": 48,
+      "total": 76
+    },
+    "note": "제공된 2024학번 교육과정 이수현황 표 기준입니다. 전공필수는 0학점으로 표시되어 있습니다.",
+    "certification_points": 95
+  },
+  "2019-2021": {
+    "source": "AI빅데이터학과 졸업여건.png",
+    "page": 1,
+    "verified": true,
+    "certification_points": 80
+  },
+  "2022": {
+    "source": "AI빅데이터학과 졸업여건.png",
+    "page": 1,
+    "verified": true,
+    "certification_points": 95
+  },
+  "2023-2026": {
+    "source": "AI빅데이터학과 졸업여건.png",
+    "page": 1,
+    "verified": true,
+    "certification_points": 95,
+    "extracurricular": {
+      "required_points": 95,
+      "source_ref": {
+        "document": "AI빅데이터학과 졸업여건.png",
+        "page": 1
+      },
+      "activities": [
+        {
+          "name": "학과활동",
+          "points_per_count": 5,
+          "max_count": 1
+        },
+        {
+          "name": "TOPCIT 응시",
+          "points_per_count": 5,
+          "max_count": 1
+        },
+        {
+          "name": "경진대회 참가",
+          "points_per_count": 10,
+          "max_count": 3
+        },
+        {
+          "name": "경진대회 수상",
+          "points_per_count": 10,
+          "max_count": 3
+        },
+        {
+          "name": "자격증",
+          "points_per_count": 6,
+          "max_count": 1
+        },
+        {
+          "name": "코딩역량인증제",
+          "points_per_count": 5,
+          "max_count": 1
+        }
+      ],
+      "verified": true
+    }
+  },
+  "unknown": {
+    "note": "자료에서 확인되지 않은 학번별 학점 기준은 임의로 설정하지 않습니다."
+  }
+}

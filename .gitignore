@@ -1,0 +1,25 @@
+# 가상환경·캐시
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# 비밀 정보 — 실제 .env 와 Streamlit secrets 는 저장소에 올리지 않습니다
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# 업로드 파일·로그
+uploads/
+*.log
+
+# 색인 산출물: 청크 JSON 과 매니페스트만 배포용으로 추적하고, 큰 벡터 파일은 제외
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/rag_index/
+data/processed/rag_index/*
+!data/processed/rag_index/records.json
+!data/processed/rag_index/manifest.json

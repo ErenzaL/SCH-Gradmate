@@ -1,0 +1,10 @@
+﻿a,b,metric,mean_diff,ci95_low,ci95_high,significant,n_questions
+hybrid,bm25,recall@5,-0.0071,-0.0616,0.041,False,52
+rrf,bm25,recall@5,-0.0545,-0.1218,0.0064,False,52
+dense,bm25,recall@5,-0.2827,-0.4045,-0.1699,True,52
+rrf,hybrid,recall@5,-0.0474,-0.0897,-0.0115,True,52
+hybrid+rerank,hybrid,recall@5,-0.0058,-0.0288,0.0115,False,52
+bm25+anchors(filter),bm25,recall@5,0.016,0.0,0.0417,False,52
+bm25+anchors(promote),bm25,recall@5,0.016,0.0,0.0417,False,52
+hybrid+anchors,hybrid,recall@5,0.0256,0.0,0.0705,False,52
+bm25+rerank,bm25,recall@5,0.0,0.0,0.0,False,52

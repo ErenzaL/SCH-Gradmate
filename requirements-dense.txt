@@ -1,0 +1,5 @@
+# 선택: 의미 검색(FAISS + 다국어 임베딩). 최대 메모리 약 940MB(측정값)로 Render Free 에는 맞지 않습니다.
+-r requirements.txt
+sentence-transformers==5.7.0
+faiss-cpu==1.15.1
+torch==2.15.0

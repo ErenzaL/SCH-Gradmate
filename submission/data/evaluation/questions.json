@@ -1,0 +1,646 @@
+[
+  {
+    "question_id": "Q01",
+    "question": "2024학번의 총 졸업 이수학점은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "총 이수학점 130학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q02",
+    "question": "2024학번 전공 이수학점 기준은 얼마인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "전공 76학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q03",
+    "question": "2024학번 교양 이수학점은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "교양 32학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q04",
+    "question": "2024학번 전공기초 이수 기준은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "전공기초 28학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q05",
+    "question": "2024학번 전공선택 이수 기준은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "전공선택 48학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q06",
+    "question": "2024학번 교양공통 기준은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "교양공통 12학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q07",
+    "question": "2024학번 교양영역 기준은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "교양영역 9학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q08",
+    "question": "2024학번 교양선택 기준은 몇 학점인가요?",
+    "category": "학점",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "교양선택 11학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q09",
+    "question": "2024학번 전공필수 이수 학점은 몇 학점으로 표시되어 있나요?",
+    "category": "전공",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "전공필수 0학점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "2024학번 졸업요건.jpeg",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0059"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q10",
+    "question": "2024학번 다면적 졸업인증 점수 소계는 얼마인가요?",
+    "category": "비교과",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "2023~2024 점수 소계 95점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q11",
+    "question": "2022학번 졸업인증 점수 소계는 몇 점인가요?",
+    "category": "비교과",
+    "admission_year": 2022,
+    "expected_answer_facts": [
+      "2022 점수 소계 95점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q12",
+    "question": "2021학번 졸업인증 점수 소계는 몇 점인가요?",
+    "category": "비교과",
+    "admission_year": 2021,
+    "expected_answer_facts": [
+      "2021 점수 소계 80점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q13",
+    "question": "2024학번 점수표에서 TOPCIT 응시는 몇 점인가요?",
+    "category": "비교과",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "TOPCIT 응시 5점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q14",
+    "question": "2024학번 코딩역량인증제 배점은 몇 점인가요?",
+    "category": "비교과",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "코딩역량인증제 Lv2 이상 5점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q15",
+    "question": "AI·SW 전공역량 졸업인증제 배점이 자료에 있나요?",
+    "category": "비교과",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "해당 항목 5점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q16",
+    "question": "2024학번 다면적 졸업인증제 비교과 배점 기준표는 무엇을 설명하나요?",
+    "category": "비교과",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "중분류·소분류별 역량점수, 승인기준, 제출증빙"
+    ],
+    "relevant_sources": [
+      {
+        "source": "다면적졸업인증제 비교과 배점 기준표.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0005",
+          "chunk_0006",
+          "chunk_0007"
+        ]
+      },
+      {
+        "source": "다면적졸업인증제 비교과 배점 기준표.pdf",
+        "page": 2,
+        "chunk_ids": [
+          "chunk_0008",
+          "chunk_0009",
+          "chunk_0010",
+          "chunk_0011"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q17",
+    "question": "봉사학습을 이수하면 학점이 부여되나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "이수 조건 충족 시 1학점, P/F"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 9,
+        "chunk_ids": [
+          "chunk_0035",
+          "chunk_0036",
+          "chunk_0037"
+        ]
+      },
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0040",
+          "chunk_0041",
+          "chunk_0042",
+          "chunk_0043",
+          "chunk_0044"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q18",
+    "question": "외국인 유학생은 봉사학습 이수 대상인가요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "외국인 학생은 이수 대상 제외로 안내"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 9,
+        "chunk_ids": [
+          "chunk_0035",
+          "chunk_0036",
+          "chunk_0037"
+        ]
+      },
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0040",
+          "chunk_0041",
+          "chunk_0042",
+          "chunk_0043",
+          "chunk_0044"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q19",
+    "question": "봉사학습 이수 조건은 무엇인가요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "사전교육·심폐소생술·봉사활동·평가교육"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 9,
+        "chunk_ids": [
+          "chunk_0035",
+          "chunk_0036",
+          "chunk_0037"
+        ]
+      },
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0040",
+          "chunk_0041",
+          "chunk_0042",
+          "chunk_0043",
+          "chunk_0044"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q20",
+    "question": "자율봉사는 포털에서 어떻게 신청하나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "봉사학습교육신청에서 자율봉사 신청"
+    ],
+    "relevant_sources": [
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 2,
+        "chunk_ids": [
+          "chunk_0045",
+          "chunk_0046"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q21",
+    "question": "봉사활동 증빙은 어느 기관 인증서를 사용할 수 있나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "1365·VMS·DOVOL 인증서"
+    ],
+    "relevant_sources": [
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 2,
+        "chunk_ids": [
+          "chunk_0045",
+          "chunk_0046"
+        ]
+      },
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 7,
+        "chunk_ids": [
+          "chunk_0053"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q22",
+    "question": "평가교육은 언제 신청할 수 있나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "사전교육·심폐소생술·봉사활동 이수 후 신청"
+    ],
+    "relevant_sources": [
+      {
+        "source": "학과 봉사학습 지도 가이드라인(조교ver).pdf",
+        "page": 9,
+        "chunk_ids": [
+          "chunk_0055",
+          "chunk_0056",
+          "chunk_0057"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q23",
+    "question": "봉사활동은 휴학 기간에 해도 인정되나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "입학 이후부터 졸업 직전 학기 성적 마감 전 활동 인정, 휴학 중 포함"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 9,
+        "chunk_ids": [
+          "chunk_0035",
+          "chunk_0036",
+          "chunk_0037"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q24",
+    "question": "헌혈도 봉사활동 시간으로 인정되나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "헌혈 1회당 4시간 인정"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 10,
+        "chunk_ids": [
+          "chunk_0038",
+          "chunk_0039"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q25",
+    "question": "봉사학습을 완료하지 못하면 졸업할 수 있나요?",
+    "category": "봉사학습",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "봉사학습 미이수 시 졸업 불가로 안내"
+    ],
+    "relevant_sources": [
+      {
+        "source": "봉사활동 등록 가이드라인 및 자주묻는질문(220818ver).pdf",
+        "page": 10,
+        "chunk_ids": [
+          "chunk_0038",
+          "chunk_0039"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q26",
+    "question": "2019~2021학번의 졸업인증 점수 소계는 얼마인가요?",
+    "category": "학번 차이",
+    "admission_year": 2020,
+    "expected_answer_facts": [
+      "2019~2021 소계 80점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q27",
+    "question": "2023~2024학번 졸업인증 점수 소계는 얼마인가요?",
+    "category": "학번 차이",
+    "admission_year": 2023,
+    "expected_answer_facts": [
+      "2023~2024 소계 95점"
+    ],
+    "relevant_sources": [
+      {
+        "source": "AI·빅데이터학과_20240305.pdf",
+        "page": 1,
+        "chunk_ids": [
+          "chunk_0000",
+          "chunk_0001",
+          "chunk_0002",
+          "chunk_0003",
+          "chunk_0004"
+        ]
+      }
+    ],
+    "answerable": true
+  },
+  {
+    "question_id": "Q28",
+    "question": "2025학번의 총 졸업학점은 몇 학점인가요?",
+    "category": "미확인",
+    "admission_year": 2025,
+    "expected_answer_facts": [
+      "제공 자료에서 확인 불가"
+    ],
+    "relevant_sources": [],
+    "answerable": false
+  },
+  {
+    "question_id": "Q29",
+    "question": "AI·빅데이터학과 전공필수 과목 전체 목록을 알려주세요.",
+    "category": "미확인",
+    "admission_year": 2024,
+    "expected_answer_facts": [
+      "교육과정 PDF 스캔으로 목록 추출 불가"
+    ],
+    "relevant_sources": [],
+    "answerable": false
+  },
+  {
+    "question_id": "Q30",
+    "question": "순천향대 기숙사 신청 마감일은 언제인가요?",
+    "category": "범위 외",
+    "admission_year": null,
+    "expected_answer_facts": [
+      "지식베이스 범위 밖"
+    ],
+    "relevant_sources": [],
+    "answerable": false
+  }
+]

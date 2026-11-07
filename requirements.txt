@@ -1,0 +1,10 @@
+# 런타임(배포) 의존성 — Render Free(512MB)에서 실행하도록 torch/sentence-transformers 를 제외했습니다.
+# 검증 환경: Python 3.11. 아래 버전은 로컬에서 테스트한 조합입니다.
+streamlit==1.66.1
+pandas==3.1.0
+numpy==2.4.6
+openpyxl==3.1.5
+PyMuPDF==1.28.2
+rank-bm25==0.2.2
+python-dotenv==1.2.4
+google-genai==1.75.0

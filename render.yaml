@@ -1,0 +1,21 @@
+# Render Blueprint — SCH GradMate (Streamlit). 무료(Free) 인스턴스: 512MB RAM / 0.1 CPU, 15분 무트래픽 시 절전.
+services:
+  - type: web
+    name: sch-gradmate
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: pip install -r requirements.txt && python scripts/build_index.py
+    startCommand: streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+    healthCheckPath: /_stcore/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.15
+      - key: RETRIEVAL_BACKEND
+        value: bm25
+      # 선택: 없으면 AI 요약 없이 자료 원문 발췌로 답합니다. 값은 Render 대시보드에서만 입력하세요.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false

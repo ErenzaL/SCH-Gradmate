@@ -1,0 +1,11 @@
+# 개발·실험·노트북 환경 (전체)
+-r requirements-dense.txt
+pytest==9.2.0
+matplotlib==3.11.2
+Pillow==11.3.0
+jupyterlab==4.6.5
+ipykernel==7.4.0
+nbformat==5.11.1
+nbclient==0.11.0
+nbconvert==7.17.2
+openai==2.54.0   # 과거 선택 기능(답변 생성)용. 현재 앱은 사용하지 않습니다.
