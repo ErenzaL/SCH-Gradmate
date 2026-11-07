@@ -93,3 +93,10 @@ def test_double_major_schedule_question_is_not_answered_from_credit_table(rules)
 def test_required_major_courses_are_not_invented(rules):
     r = ask(rules, "전공필수 과목은 무엇인가요?", 2024)
     assert "0학점" in r.text and "목록은 제공된 자료에서 확인되지 않습니다" in r.text
+
+
+def test_graduation_project_question_does_not_pretend_it_means_thesis(rules):
+    r = ask(rules, "졸업 작품은 필수인가?", 2024)
+    assert r.mode == "rule_caveat" and "'졸업작품'이라는 항목이 없어" in r.text and "졸업논문 심의" in r.text
+    assert r.citations[0]["source"] == "졸업자격요건.png"
+    assert "'졸업작품'이라는 항목이 없어" not in ask(rules, "졸업 논문이 필요한가요?", 2024).text

@@ -233,9 +233,10 @@ def double_major(rules: dict) -> RuleResult:
     return RuleResult("double_major", text, [_cite(gen["source"], gen["page"], f"복수전공: {dm['detail']}", None, GENERIC_CAVEAT)], "rule_caveat")
 
 
-def thesis(rules: dict) -> RuleResult:
+def thesis(rules: dict, asked_project: bool = False) -> RuleResult:
     gen = _generic(rules)
-    text = f"학과명이 표기되지 않은 '졸업자격요건' 표에는 4학년에 **졸업논문 심의에 통과하여야 함**이라고 적혀 있습니다. {GENERIC_CAVEAT}"
+    lead = "제공된 자료에는 '졸업작품'이라는 항목이 없어 졸업작품의 필수 여부는 확인하기 어렵습니다. 다만 " if asked_project else ""
+    text = f"{lead}학과명이 표기되지 않은 '졸업자격요건' 표에는 4학년에 **졸업논문 심의에 통과하여야 함**이라고 적혀 있습니다. {GENERIC_CAVEAT}"
     return RuleResult("thesis", text, [_cite(gen["source"], gen["page"], f"4학년: {gen['thesis']}", None, GENERIC_CAVEAT)], "rule_caveat")
 
 
@@ -275,8 +276,8 @@ def answer_rule(question: str, year: int | None, rules: dict | None = None) -> R
         return certification_points(year, rules, explain=bool(re.search(r"계산|어떻게|구성|배점", q)))
     if "복수전공" in q and not _SCHEDULE.search(q):
         return double_major(rules)
-    if "졸업논문" in q:
-        return thesis(rules)
+    if re.search(r"졸업\s*(논문|작품)", q):
+        return thesis(rules, asked_project=bool(re.search(r"졸업\s*작품", q)))
     if "전공필수" in q:
         return major_credits(year, rules, "required")
     if "전공기초" in q or "학과기초" in q:
