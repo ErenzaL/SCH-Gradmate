@@ -101,13 +101,20 @@ def make_citation(hit: dict, snippet: str | None = None) -> dict:
             "origin": "retrieval"}
 
 
+def _clean_line(line: str) -> str:
+    """표시용 정리: PDF 글머리 기호(Wingdings 'þ')와 줄머리 '- ' 를 없애 마크다운 목록으로 바뀌지 않게 합니다."""
+    line = line.replace("þ", " ").replace("\uf0fc", " ")
+    line = re.sub(r"^\s*[-–•·▪○●]\s+", "", line)
+    return re.sub(r"\s{2,}", " ", line).strip()
+
+
 def _lines(text: str) -> list[str]:
     parts: list[str] = []
     for line in text.splitlines():
         line = line.strip()
         if not line:
             continue
-        parts.extend(p.strip() for p in re.split(r"(?<=[.다요음함])\s+(?=[가-힣A-Za-z0-9(\[※·-])", line) if p.strip())
+        parts.extend(c for c in (_clean_line(p) for p in re.split(r"(?<=[.다요음함])\s+(?=[가-힣A-Za-z0-9(\[※·þ-])", line)) if c)
     return parts
 
 

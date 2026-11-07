@@ -146,6 +146,9 @@ def show_answer(message: dict | str) -> None:
     label = MODE_LABEL.get(message.get("mode"))
     if label:
         st.caption(label)
+    for warning in message.get("warnings") or []:
+        if "AI 요약" in warning:  # Gemini 호출 실패를 사용자가 알 수 있게 표시(내부 오류 문구는 포함되지 않음)
+            st.caption("⚠️ " + warning)
     citations = message.get("citations") or []
     if citations:
         with st.expander(f"근거 자료 {len(citations)}건 보기"):
