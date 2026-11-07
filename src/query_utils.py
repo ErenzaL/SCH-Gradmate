@@ -16,10 +16,11 @@ GENERIC_TERMS = {
     "되나요", "있나요", "인가요", "하나요", "한가요", "몇", "얼마", "얼마나", "언제", "어디", "어느", "경우", "때", "내용",
     "자료", "정보", "대해", "대한", "하면", "해야", "할까요", "있는", "있어요", "어떤", "무슨", "점이", "것이", "수", "있을까요",
     "이전", "지시", "무시", "시작하나요", "시작", "그럼", "그러면", "그리고", "또", "저는", "제가", "제", "내", "나", "현재",
-    "순천향대", "순천향대학교", "입니다", "이에요", "예요", "이요", "인데요", "인데", "과목", "교과목", "ai빅데이터학과", "빅데이터학과", "ai", "더", "많이", "계산하나요", "되어", "돼요", "인지",
+    "순천향대", "순천향대학교", "됐어요", "됐어", "됐다", "했어요", "했어", "좋아요", "좋아", "입니다", "이에요", "예요", "이요", "인데요", "인데", "과목", "교과목", "ai빅데이터학과", "빅데이터학과", "ai", "더", "많이", "계산하나요", "되어", "돼요", "인지",
 }
 # '얼마여야', '졸업하려면', '알려주실' 처럼 활용형으로 나타나는 일반 어휘의 어간
-GENERIC_PREFIXES = ("얼마", "몇", "어떻", "무엇", "알려", "졸업하", "필요", "가능", "되나", "하나", "있나", "해야", "하려", "시작")
+GENERIC_PREFIXES = ("얼마", "몇", "어떻", "무엇", "알려", "졸업하", "필요", "가능", "되나", "하나", "있나", "해야", "하려", "시작",
+                     "도와", "도움", "있어", "안녕", "반가", "고마", "감사", "수고", "누구", "뭐", "뭘")
 _PARTICLE_RE = re.compile(r"(하도록|도록|으려면|려면|는지|은지|으로는|에서는|에게는|인가요|입니까|하나요|한가요|나요|인지|이란|에서|으로|까지|부터|은|는|이|가|을|를|에|로|도|의|와|과|만|란)$")
 
 _INJECTION = re.compile(
@@ -51,7 +52,7 @@ def is_injection(question: str) -> bool:
 
 _WORDS: set[str] = set()
 _FLAT = ""
-_VERB_END = re.compile(r"(하지|하면|하는|하나|할까|할|한|했|되는|되나|될|된|도록|려면|하려|해야|해도|해서|하고)$")
+_VERB_END = re.compile(r"(해야돼요|해야돼|해야해|해야지|하지|하면|하는|하나|하냐|할까|할래|할|한|했|되는|되나|될|된|도록|려면|하려|해야|해도|해서|하고|해요|돼요|돼|해)$")
 _QUESTION_END = re.compile(r"(인가요|입니까|가요|나요|까요|니까)$")
 
 
@@ -110,6 +111,31 @@ def term_coverage(term: str, text: str) -> float:
         return 0.0  # 영문·숫자가 들어간 핵심어(예: 3학년1학기)는 부분 일치를 허용하지 않습니다.
     grams = _bigrams(term)
     return sum(1 for g in grams if g in flat) / len(grams)
+
+
+# 문서는 '외국인'이라고 쓰는데 학생은 '유학생'이라고 묻는 식의 용어 차이(소규모 도메인 사전)
+SYNONYMS = {"유학생": "외국인", "외국인학생": "외국인", "외국인유학생": "외국인"}
+
+
+def normalize_query(text: str) -> str:
+    """검색용 질의 보정: 도메인 동의어로 바꾸고, 문서에 없는 낱말은 첫 글자가 같고 아주 비슷한 문서 낱말로 고칩니다(오타 보정)."""
+    import difflib
+    if not _WORDS:
+        return text
+
+    def fix(match: "re.Match[str]") -> str:
+        word = match.group(0)
+        stem = _strip_particle(word)
+        if not stem or len(stem) < 3:
+            return word
+        if stem in SYNONYMS:
+            return word.replace(stem, SYNONYMS[stem], 1)
+        if stem in _WORDS or stem in _FLAT or len(stem) < 4:
+            return word
+        close = [w for w in difflib.get_close_matches(stem, _WORDS, n=3, cutoff=0.75) if w[0] == stem[0]]
+        return word.replace(stem, close[0], 1) if close else word
+
+    return re.sub(r"[가-힣]{3,}", fix, text)
 
 
 def has_domain_terms(question: str) -> bool:

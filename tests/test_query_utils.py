@@ -46,3 +46,20 @@ def test_greeting_and_normalize_unicode():
 def test_term_coverage_exact_for_digits_and_fuzzy_for_korean_compounds():
     assert term_coverage("교양학점", "교양: 32학점 이수") >= 0.6
     assert term_coverage("3학년1학기", "4학년 2학기 1학점") == 0.0
+
+
+def test_casual_endings_are_not_treated_as_topic_words():
+    from src import retrieval
+    retrieval.index()
+    assert content_terms("봉사학습 어떻게 신청해?") == ["봉사학습", "신청"]
+    assert content_terms("외국인은 봉사활동 해야돼?") == ["외국인", "봉사활동"]
+
+
+def test_normalize_query_fixes_typos_and_domain_synonyms_conservatively():
+    from src import retrieval
+    from src.query_utils import normalize_query
+    retrieval.index()
+    assert normalize_query("유학생은 봉상활동도 이수 해야하나") == "외국인은 봉사활동도 이수 해야하나"
+    assert normalize_query("봉사학습 신청") == "봉사학습 신청"                 # 올바른 낱말은 그대로
+    assert normalize_query("기숙사 신청 마감일") == "기숙사 신청 마감일"       # 무관한 낱말을 억지로 고치지 않음
+    assert normalize_query("") == ""

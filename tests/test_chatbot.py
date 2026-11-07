@@ -96,3 +96,13 @@ def test_excerpts_hide_pdf_bullet_glyphs_and_list_markers():
         assert "þ" not in c["snippet"]
         assert not any(line.lstrip().startswith(("- ", "• ")) for line in c["snippet"].splitlines())
     assert "þ" not in r["text"]
+
+
+def test_chatty_messages_are_small_talk_not_topic_questions():
+    from src.query_utils import content_terms
+    from src import retrieval
+    retrieval.index()
+    for msg in ("안녕! 뭐 도와줄 수 있어?", "안녕하세요 너 누구야?", "고마워요 도움이 됐어요", "뭐 할 수 있어?"):
+        assert content_terms(msg) == [], (msg, content_terms(msg))
+        assert respond(msg, None)["mode"] == "greeting"
+    assert content_terms("졸업 도와주는 봉사학습 시간") == ["봉사학습", "시간"] or "봉사학습" in content_terms("졸업 도와주는 봉사학습 시간")

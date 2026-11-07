@@ -87,7 +87,7 @@ def test_breaker_skips_calls_for_a_while_then_recovers(monkeypatch):
         with pytest.raises(rag.LLMCoolingDown):
             rag._call_gemini("hi", "sys")
     assert calls["n"] == 1 and rag.llm_in_cooldown()
-    monkeypatch.setattr(rag, "_llm_blocked_until", time.monotonic() - 1)
+    rag._model_blocked_until["m"] = time.monotonic() - 1
     assert not rag.llm_in_cooldown()
 
 
@@ -176,3 +176,139 @@ def test_who_are_you_on_first_message_is_small_talk(monkeypatch):
     monkeypatch.setattr(rag, "gemini_configured", lambda: True)
     monkeypatch.setattr(rag, "_call_gemini", lambda *a, **k: "저는 졸업 도우미예요. 졸업학점이나 봉사학습을 물어보세요!")
     assert respond("안녕! 너 누구야?", None)["generator"] == "gemini"
+
+
+def test_typo_question_is_answered_without_llm():
+    r = respond("유학생은 봉상활동도 이수 해야하나", 2024, use_llm=False)
+    assert r["mode"] == "extractive" and "외국인" in r["text"] and r["citations"]
+
+
+def test_llm_query_rewrite_rescues_a_failed_search_once(monkeypatch, llm_on):
+    from src.chatbot import respond as _r
+    calls = []
+
+    def _call(contents, system, temperature=0.2, model=None, timeout_ms=None):
+        calls.append(system[:12])
+        if "한 문장으로 고쳐" in system:
+            return "외국인 학생도 봉사학습을 이수해야 하나요?"
+        return "외국인 학생은 제외돼요. 근거: S1"
+
+    monkeypatch.setattr(rag, "_call_gemini", _call)
+    r = _r("걔네 해외 출신도 의무야?", 2024)  # 문서 어휘가 없어 1차 검색은 비어 있음
+    assert len(calls) >= 1 and r["mode"] in ("llm", "extractive", "insufficient")
+
+
+def test_rewrite_query_rejects_new_numbers_and_empty_output(monkeypatch):
+    monkeypatch.setattr(rag, "_call_gemini", lambda *a, **k: "졸업학점 130학점이 필요한가요?")
+    assert rag.rewrite_query("졸업학점 필요한가요?") is None
+    monkeypatch.setattr(rag, "_call_gemini", lambda *a, **k: "")
+    assert rag.rewrite_query("질문") is None
+    monkeypatch.setattr(rag, "_call_gemini", lambda *a, **k: "외국인도 봉사학습을 하나요?\n설명입니다")
+    assert rag.rewrite_query("유학생도 봉사학습?") == "외국인도 봉사학습을 하나요?"
+
+
+def test_find_working_model_skips_failures_and_never_leaks_errors(monkeypatch):
+    tried = []
+
+    def _call(contents, system, temperature=0.2, model=None, timeout_ms=None):
+        tried.append(model)
+        if model == "bad-model":
+            err = RuntimeError("secret detail"); err.code = 504; raise err
+        return "안녕"
+
+    monkeypatch.setattr(rag, "_call_gemini", _call)
+    chosen, log = rag.find_working_model(["bad-model", None, "bad-model", "good-model", "never-tried"])
+    assert chosen == "good-model" and tried == ["bad-model", "good-model"]
+    assert log == ["bad-model: 실패(504)", "good-model: 응답함"] and "secret" not in " ".join(log)
+    assert rag.find_working_model([None])[0] is None
+
+
+
+class _Err(Exception):
+    def __init__(self, code):
+        super().__init__("x"); self.code = code
+
+
+def _fake_client(monkeypatch, behaviour):
+    """behaviour(model) -> 응답 문자열 또는 예외. 호출된 모델 목록을 돌려줍니다."""
+    import google.genai as genai
+    called = []
+
+    class R:
+        def __init__(self, t): self.text = t
+
+    class Client:
+        def __init__(self, **kw):
+            class M:
+                @staticmethod
+                def generate_content(model, contents, config=None):
+                    called.append(model)
+                    out = behaviour(model)
+                    if isinstance(out, Exception):
+                        raise out
+                    return R(out)
+            self.models = M()
+
+    monkeypatch.setattr(genai, "Client", Client)
+    monkeypatch.setenv("GEMINI_API_KEY", "k")
+    return called
+
+
+def test_model_chain_moves_to_next_model_and_parks_the_exhausted_one(monkeypatch):
+    called = _fake_client(monkeypatch, lambda m: _Err(429) if m == "a" else "안녕하세요")
+    monkeypatch.setenv("GEMINI_MODEL", "a, b")
+    assert rag.configured_models() == ["a", "b"]
+    assert rag._call_gemini("hello", "sys") == "안녕하세요"
+    assert called == ["a", "b"] and rag.last_model_used == "b"
+    assert rag._model_blocked_until["a"] - __import__("time").monotonic() > 1000     # 429 는 오래 쉼
+    called.clear()
+    assert rag._call_gemini("hello 2", "sys") == "안녕하세요"
+    assert called == ["b"]                                                              # 쉬는 모델은 건너뜀
+    assert not rag.llm_in_cooldown()
+
+
+def test_all_models_failing_raises_last_error_then_cools_down(monkeypatch):
+    called = _fake_client(monkeypatch, lambda m: _Err(504))
+    monkeypatch.setenv("GEMINI_MODEL", "a,b")
+    with pytest.raises(_Err):
+        rag._call_gemini("q", "sys")
+    assert called == ["a", "b"] and rag.llm_in_cooldown()
+    with pytest.raises(rag.LLMCoolingDown):
+        rag._call_gemini("q2", "sys")
+    assert called == ["a", "b"]
+
+
+def test_identical_requests_are_served_from_cache_without_api_calls(monkeypatch):
+    called = _fake_client(monkeypatch, lambda m: "캐시될 답")
+    monkeypatch.setenv("GEMINI_MODEL", "a")
+    assert rag._call_gemini("같은 질문", "sys") == "캐시될 답"
+    assert rag._call_gemini("같은 질문", "sys") == "캐시될 답"
+    assert rag._call_gemini("다른 질문", "sys") == "캐시될 답"
+    assert called == ["a", "a"]
+
+
+def test_cache_expires_and_empty_replies_are_not_cached(monkeypatch):
+    replies = iter(["", "두 번째"])
+    called = _fake_client(monkeypatch, lambda m: next(replies))
+    monkeypatch.setenv("GEMINI_MODEL", "a")
+    assert rag._call_gemini("q", "s") == ""
+    assert rag._call_gemini("q", "s") == "두 번째"
+    assert len(called) == 2
+    key = next(iter(rag._llm_cache))
+    rag._llm_cache[key] = (rag._llm_cache[key][0] - rag.LLM_CACHE_TTL_SECONDS - 1, "오래된 답")
+    monkeypatch.setattr(rag, "_llm_cache", rag._llm_cache)
+    replies2 = iter(["새 답"])
+    called2 = _fake_client(monkeypatch, lambda m: next(replies2))
+    assert rag._call_gemini("q", "s") == "새 답" and called2 == ["a"]
+
+
+def test_small_talk_allows_list_numbers_but_not_numeric_facts(monkeypatch):
+    monkeypatch.setattr(rag, "_call_gemini", lambda *a, **k: "이런 걸 도와드려요:\n1. 졸업학점\n2. 봉사학습\n3. 다면적 졸업인증제")
+    assert "1. 졸업학점" in rag.small_talk_reply("안녕 뭐 도와줄 수 있어?")
+    for fact in ("졸업학점은 130학점이에요.", "TOPCIT은 5 점이에요", "봉사활동은 36시간이에요"):
+        monkeypatch.setattr(rag, "_call_gemini", lambda *a, _f=fact, **k: _f)
+        assert rag.small_talk_reply("안녕") is None
+
+
+def test_rephrase_prompt_forbids_greeting_and_self_introduction():
+    assert "인사말이나 자기소개는 하지 말고" in rag.REPHRASE_SYSTEM

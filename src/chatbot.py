@@ -5,7 +5,7 @@ import os
 import re
 
 from . import rag
-from .query_utils import MAX_QUESTION_CHARS, content_terms, extract_year, has_domain_terms, is_greeting, is_injection, normalize
+from .query_utils import MAX_QUESTION_CHARS, content_terms, extract_year, has_domain_terms, is_greeting, is_injection, normalize, normalize_query
 from .retrieval import active_backend, index, retrieve
 from .rule_engine import ASK_YEAR, answer_rule
 
@@ -116,7 +116,7 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
                     return _result(GREETING, "greeting", warnings=[_llm_failure_note(exc)])
         if smalltalk:
             return _result(GREETING, "greeting")
-    search_q = f"{previous} {q}" if previous and _FOLLOW_UP.match(q) else q
+    search_q = normalize_query(f"{previous} {q}" if previous and _FOLLOW_UP.match(q) else q)  # 오타·동의어 보정
 
     try:
         _, _, _, warnings = index()
@@ -124,6 +124,17 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
     except Exception:
         return _result("자료를 불러오는 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.", "error")
     level, used = rag.assess_evidence(search_q, hits)
+    if level == "none" and _llm_ready(use_llm):
+        # 검색이 비었으면 AI 로 질문을 고쳐 한 번만 다시 찾아봅니다(오타·표현 차이 대응).
+        try:
+            rewritten = rag.rewrite_query(q, history)
+            if rewritten and normalize(rewritten) != normalize(search_q):
+                hits2 = retrieve(rewritten, year, limit=6, method="hybrid", use_anchors="promote", collapse_duplicates=True)
+                level2, used2 = rag.assess_evidence(rewritten, hits2)
+                if level2 != "none":
+                    search_q, hits, level, used = rewritten, hits2, level2, used2
+        except Exception:
+            pass  # 실패하면 아래의 '확인하기 어렵습니다' 안내로 넘어갑니다
     if level == "none":
         return _result(rag.INSUFFICIENT, "insufficient", warnings=list(warnings), evidence_level=level)
 
