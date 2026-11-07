@@ -16,4 +16,5 @@ def no_external_ai(monkeypatch):
         monkeypatch.setenv(key, "")
     import src.rag as rag
     monkeypatch.setattr(rag, "load_dotenv", lambda *a, **k: None)
+    monkeypatch.setattr(rag, "_llm_blocked_until", 0.0)  # 서킷 브레이커 상태가 테스트 사이에 새지 않게 초기화
     yield

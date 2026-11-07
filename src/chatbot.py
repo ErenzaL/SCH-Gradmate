@@ -1,10 +1,11 @@
 """질문 한 건을 처리하는 통합 진입점. 규칙 계산 → 검색 → 근거 평가 → (선택) LLM 생성 순서로 동작합니다."""
 from __future__ import annotations
 
+import os
 import re
 
 from . import rag
-from .query_utils import MAX_QUESTION_CHARS, content_terms, extract_year, is_greeting, is_injection, normalize
+from .query_utils import MAX_QUESTION_CHARS, content_terms, extract_year, has_domain_terms, is_greeting, is_injection, normalize
 from .retrieval import active_backend, index, retrieve
 from .rule_engine import ASK_YEAR, answer_rule
 
@@ -17,7 +18,21 @@ _FOLLOW_UP = re.compile(r"^(그럼|그러면|그리고|또|그건|그것은|그 
 
 def _result(text: str, mode: str, citations=None, hits=None, warnings=None, **extra) -> dict:
     return {"text": text, "mode": mode, "citations": citations or [], "hits": hits or [], "warnings": warnings or [],
-            "needs_year": mode == "clarify", "evidence_level": extra.pop("evidence_level", None), "generator": extra.pop("generator", "none"), **extra}
+            "needs_year": mode == "clarify", "evidence_level": extra.pop("evidence_level", None), "generator": extra.pop("generator", "none"), "verified_text": extra.pop("verified_text", None), **extra}
+
+
+COOLING_NOTE = "AI 요약이 잠시 쉬는 중이라 이번에는 자료·표 기반 답변으로 안내합니다."
+
+
+def _llm_ready(use_llm: bool) -> bool:
+    return bool(use_llm and rag.gemini_configured())
+
+
+def _llm_failure_note(exc: Exception) -> str:
+    if isinstance(exc, rag.LLMCoolingDown):
+        return COOLING_NOTE
+    code = getattr(exc, "code", None)
+    return "AI 요약 서비스가 응답하지 않아 자료 발췌로 안내했습니다." + (f" (오류 코드 {code})" if code is not None else "")
 
 
 def _previous_user_question(history: list[dict] | None, current: str | None = None) -> str | None:
@@ -57,12 +72,16 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
         return _result(TOO_LONG, "empty")
     if is_injection(q):
         return _result(INJECTION_REPLY, "refused")
+    try:
+        index()  # 문서 어휘를 불러와 잡담·무관 질문 판별에 씁니다(이미 불러왔으면 즉시 반환)
+    except Exception:
+        pass
     explicit_year = extract_year(q)
     year = explicit_year or year
 
     previous = _previous_user_question(history, q)
     # 학번을 되묻는 질문에 "2024학번입니다"처럼 학번만 답하면 직전 질문을 그 학번으로 다시 답합니다.
-    if explicit_year and previous and not content_terms(q):
+    if explicit_year and previous and not has_domain_terms(q):
         q = normalize(previous)
         previous = _previous_user_question(history, q)
     rule = answer_rule(q, year)
@@ -72,10 +91,31 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
         mode = {"clarify": "clarify", "unavailable": "insufficient"}.get(rule.mode, "rule")
         # 규칙 답변도 근거 자료를 hits 로 노출합니다(자료명·쪽·적용 학번·원문 발췌).
         evidence = [{"source": c["source"], "title": c["title"], "page": c["page"], "text": c["snippet"], "admission_years": c.get("years")} for c in rule.citations]
-        return _result(rule.text, mode, rule.citations, evidence, rule_mode=rule.mode, generator="rules")
+        text, generator, extra_warnings, verified = rule.text, "rules", [], None
+        # 확정 답변을 대화체로 풀어 쓰되, 숫자·주의 사항이 하나라도 달라지면 원문을 씁니다.
+        if mode == "rule" or rule.mode in ("rule_caveat", "conflict"):
+            if _llm_ready(use_llm) and os.getenv("GEMINI_REPHRASE", "1") != "0":
+                try:
+                    friendly = rag.rephrase_rule_answer(q, year, rule.text, history)
+                    if friendly:
+                        text, generator, verified = friendly, "rules+gemini", rule.text
+                except Exception as exc:
+                    extra_warnings.append(_llm_failure_note(exc))
+        return _result(text, mode, rule.citations, evidence, extra_warnings, rule_mode=rule.mode, generator=generator, verified_text=verified)
 
-    if is_greeting(q) or not content_terms(q):
-        return _result(GREETING, "greeting")
+    smalltalk = is_greeting(q) or not content_terms(q)
+    offtopic = not smalltalk and not has_domain_terms(q)  # 졸업 자료 어휘가 하나도 없는 질문(잡담·무관한 질문)
+    if smalltalk or (offtopic and _llm_ready(use_llm)):
+        if _llm_ready(use_llm):
+            try:
+                reply = rag.small_talk_reply(q, history)
+                if reply:
+                    return _result(reply, "greeting", generator="gemini")
+            except Exception as exc:
+                if smalltalk:
+                    return _result(GREETING, "greeting", warnings=[_llm_failure_note(exc)])
+        if smalltalk:
+            return _result(GREETING, "greeting")
     search_q = f"{previous} {q}" if previous and _FOLLOW_UP.match(q) else q
 
     try:
@@ -95,7 +135,7 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
     warnings = list(warnings)
     if use_llm and level == "supported" and rag.gemini_configured():
         try:
-            raw = rag.generate_with_gemini(search_q, year, used)
+            raw = rag.generate_with_gemini(search_q, year, used, history=history)
             text, ids = rag.parse_used_sources(raw, len(used))
             if re.search(r"[가-힣]", text):
                 if "확인하기 어렵습니다" in text and not ids:
@@ -104,7 +144,6 @@ def respond(question: str, year: int | None = None, history: list[dict] | None =
                 citations = [rag.make_citation(h, rag.best_snippet(search_q, h)) for h in cited]
                 return _result(text, "llm", citations, cited, warnings, evidence_level=level, generator="gemini")
         except Exception as exc:
-            code = getattr(exc, "code", None)
-            warnings.append("AI 요약 서비스가 응답하지 않아 자료 발췌로 안내했습니다." + (f" (오류 코드 {code})" if code is not None else ""))
+            warnings.append(_llm_failure_note(exc))
     text, citations = rag.compose_extractive(search_q, used, level, year)
     return _result(text, "extractive", citations, used, warnings, evidence_level=level, generator="extractive")

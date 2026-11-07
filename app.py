@@ -144,8 +144,13 @@ def show_answer(message: dict | str) -> None:
             answer_lines.append(line)
     st.markdown("\n".join(answer_lines).strip())
     label = MODE_LABEL.get(message.get("mode"))
+    if message.get("mode") == "rule" and message.get("generator") == "rules+gemini":
+        label = "검증된 표의 값을 AI가 대화체로 풀어 쓴 답변입니다 · 숫자는 표 값 그대로이며 아래에서 확정 답변을 볼 수 있어요"
     if label:
         st.caption(label)
+    if message.get("verified_text"):
+        with st.expander("표 기준 확정 답변(원문) 보기"):
+            st.markdown(message["verified_text"])
     for warning in message.get("warnings") or []:
         if "AI 요약" in warning:  # Gemini 호출 실패를 사용자가 알 수 있게 표시(내부 오류 문구는 포함되지 않음)
             st.caption("⚠️ " + warning)
@@ -283,7 +288,8 @@ def answer_question(question: str) -> str | dict:
         result = respond(question, year, history=st.session_state.messages[:-1][-6:])  # 방금 추가한 현재 질문은 제외
     except Exception:
         return {"content": "답변을 준비하는 중 문제가 생겼어요. 잠시 후 다시 질문해 주세요.", "mode": "error", "citations": []}
-    return {"content": result["text"], "mode": result["mode"], "citations": result["citations"], "warnings": result["warnings"]}
+    return {"content": result["text"], "mode": result["mode"], "citations": result["citations"], "warnings": result["warnings"],
+            "generator": result["generator"], "verified_text": result["verified_text"]}
 
 
 # 첫 방문에만 간결한 인사와 빠른 시작 버튼을 보여줍니다.
@@ -443,7 +449,7 @@ with st.sidebar:
     except Exception:
         st.caption("자료를 불러오지 못했어요. 잠시 후 새로고침해 주세요.")
     st.caption("공식 졸업 승인 여부를 확정하는 도구가 아닙니다. 학번별 규정은 학과 사무실에서 최종 확인해 주세요.")
-    st.caption("AI 요약이 켜져 있으면 질문과 검색된 자료 일부가 Google Gemini API로 전송됩니다. 개인정보는 입력하지 마세요.")
+    st.caption("AI 요약이 켜져 있으면 질문, 직전 대화 일부, 검색된 자료·표 계산 결과가 Google Gemini API로 전송됩니다. 개인정보는 입력하지 마세요.")
 
 # 입력창은 항상 대화 흐름의 아래쪽에 둡니다.
 prompt = st.chat_input("졸업요건에 대해 궁금한 점을 입력하세요.", max_chars=MAX_QUESTION_CHARS)

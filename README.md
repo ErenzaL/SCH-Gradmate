@@ -38,7 +38,9 @@ streamlit run app.py
 | `requirements-dev.txt` | 노트북·테스트·실험 전체 |
 | `.env.example` | 환경 변수 예시(값은 비어 있음). 실제 `.env` 는 커밋하지 마세요 |
 
-환경 변수: `RETRIEVAL_BACKEND`(`auto` \| `bm25`), `GEMINI_API_KEY`·`GEMINI_MODEL`(선택, 둘 다 있어야 AI 요약 사용), `RETRIEVAL_HEADERS=1`(선택, 색인 문맥 헤더).
+환경 변수: `RETRIEVAL_BACKEND`(`auto` \| `bm25`), `GEMINI_API_KEY`·`GEMINI_MODEL`(선택, 둘 다 있어야 AI 사용), `GEMINI_REPHRASE=0`(선택, 표 기반 답변의 대화체 다듬기만 끔), `RETRIEVAL_HEADERS=1`(선택, 색인 문맥 헤더).
+
+**Gemini를 켜면** 인사·잡담에 자연스럽게 답하고, 직전 대화를 참고하며, 자료 기반 질문은 근거를 요약합니다. 학점·점수 답변은 표에서 계산한 값을 대화체로만 다시 쓰며, 모든 숫자와 주의 사항이 그대로인지 코드가 검사하고 하나라도 다르면 원문을 보여 줍니다. 호출이 실패하면 45초 동안 호출을 쉬고(서킷 브레이커) 표·자료 기반 답변으로 안내합니다. 모델 ID는 Google AI Studio 목록에서 고르세요. 2026-11-07 측정에서 `gemini-3-flash-preview`는 호출 3~10초(중앙값 4초), `gemini-3.1-flash-lite`는 1~41초로 들쭉날쭉했고, `gemini-3.8-flash`는 시간 초과(504)였습니다(표본이 작고 시점에 따라 달라질 수 있음).
 
 ## 자료와 한계
 

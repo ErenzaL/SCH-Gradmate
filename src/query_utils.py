@@ -50,14 +50,18 @@ def is_injection(question: str) -> bool:
 
 
 _WORDS: set[str] = set()
+_FLAT = ""
 _VERB_END = re.compile(r"(하지|하면|하는|하나|할까|할|한|했|되는|되나|될|된|도록|려면|하려|해야|해도|해서|하고)$")
 _QUESTION_END = re.compile(r"(인가요|입니까|가요|나요|까요|니까)$")
 
 
 def set_vocabulary(texts) -> None:
     """문서에 나오는 한글 낱말 집합을 등록합니다. 조사 판별에 사용합니다."""
+    global _FLAT
+    joined = unicodedata.normalize("NFC", " ".join(texts)).casefold()
     _WORDS.clear()
-    _WORDS.update(re.findall(r"[가-힣]{2,}", unicodedata.normalize("NFC", " ".join(texts)).casefold()))
+    _WORDS.update(re.findall(r"[가-힣]{2,}", joined))
+    _FLAT = re.sub(r"\s+", "", joined)
 
 
 def _strip_particle(term: str) -> str:
@@ -106,6 +110,12 @@ def term_coverage(term: str, text: str) -> float:
         return 0.0  # 영문·숫자가 들어간 핵심어(예: 3학년1학기)는 부분 일치를 허용하지 않습니다.
     grams = _bigrams(term)
     return sum(1 for g in grams if g in flat) / len(grams)
+
+
+def has_domain_terms(question: str) -> bool:
+    """질문의 핵심어 중 하나라도 문서 어휘에 있으면 졸업 자료와 관련된 질문으로 봅니다(인사·잡담·무관한 질문은 False)."""
+    terms = content_terms(question)
+    return any(term_coverage(t, _FLAT) >= 0.6 for t in terms) if _FLAT else bool(terms)
 
 
 def evidence_coverage(question: str, texts: list[str], threshold: float = 0.6) -> tuple[float, list[str]]:

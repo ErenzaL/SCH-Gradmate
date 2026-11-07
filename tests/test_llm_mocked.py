@@ -15,7 +15,7 @@ def llm_on(monkeypatch):
 def test_llm_answer_cites_only_sources_the_model_reports_using(monkeypatch, llm_on):
     calls = {}
 
-    def fake(question, year, hits, model=None):
+    def fake(question, year, hits, model=None, history=None):
         calls["n"] = len(hits)
         return "외국인 학생은 봉사학습 이수 대상에서 제외됩니다. [S1]\n근거: S1"
 
