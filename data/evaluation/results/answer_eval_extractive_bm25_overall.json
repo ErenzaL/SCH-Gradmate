@@ -3,6 +3,6 @@
   "passed": 50,
   "pass_rate": 0.833,
   "soft_pass_rate": 0.867,
-  "p95_latency_ms": 7.64,
+  "p95_latency_ms": 8.19,
   "backend": "bm25"
 }

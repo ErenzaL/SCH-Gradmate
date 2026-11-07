@@ -95,3 +95,13 @@ def test_clicking_a_suggested_question_answers_without_errors(app):
     assert not app.exception
     assert last_assistant(app)["mode"] in ("extractive", "rule", "insufficient")
     assert app.session_state.messages[0]["content"] == "졸업에 봉사활동이 필요한가요?"
+
+
+def test_app_survives_an_older_chatbot_result_without_new_fields(monkeypatch):
+    import src.chatbot as chatbot
+
+    monkeypatch.setattr(chatbot, "respond", lambda *a, **k: {"text": "예전 형식 답변", "mode": "rule", "citations": [], "hits": [], "warnings": []})
+    at = AppTest.from_file(APP, default_timeout=60).run()
+    at.chat_input[0].set_value("졸업학점은?").run()
+    assert not at.exception
+    assert last_assistant(at)["content"] == "예전 형식 답변"

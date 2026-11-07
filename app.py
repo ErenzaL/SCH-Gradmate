@@ -288,8 +288,9 @@ def answer_question(question: str) -> str | dict:
         result = respond(question, year, history=st.session_state.messages[:-1][-6:])  # 방금 추가한 현재 질문은 제외
     except Exception:
         return {"content": "답변을 준비하는 중 문제가 생겼어요. 잠시 후 다시 질문해 주세요.", "mode": "error", "citations": []}
-    return {"content": result["text"], "mode": result["mode"], "citations": result["citations"], "warnings": result["warnings"],
-            "generator": result["generator"], "verified_text": result["verified_text"]}
+    # .get 을 쓰는 이유: 배포 중 app.py 와 src/ 가 잠시 서로 다른 버전이어도 앱이 죽지 않게 하기 위함
+    return {"content": result["text"], "mode": result.get("mode"), "citations": result.get("citations") or [], "warnings": result.get("warnings") or [],
+            "generator": result.get("generator", "none"), "verified_text": result.get("verified_text")}
 
 
 # 첫 방문에만 간결한 인사와 빠른 시작 버튼을 보여줍니다.
