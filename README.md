@@ -74,10 +74,6 @@ python scripts/measure_resources.py                    # 메모리·지연 측�
 - 노트북 `notebooks/SCH_Graduation_RAG.ipynb`(54셀)는 원래 01~19장을 유지하고 20~26장을 추가했습니다. 원본은 `notebooks/SCH_Graduation_RAG.original_2026-11-02.ipynb`. 임베딩은 **학습·파인튜닝이 아니라** 사전학습 모델의 추론입니다.
 - 사용 가능한 **생성형 답변 평가는 없습니다**(Gemini 성공 응답을 확인하지 못함).
 
-## 배포
-
-`render.yaml` 로 Render Free(512 MB)에 올릴 수 있게 구성했습니다(BM25 기본, 약 93 MB). **실제 배포·공개 URL 검증은 하지 않았습니다.** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) 참고.
-
 ## 알려진 한계
 1. 이미지 전사는 사람 검수 전입니다.
 2. 생성형(Gemini) 경로는 mock 테스트만 통과했고 실제 성공 호출은 확인하지 못했습니다(504).
